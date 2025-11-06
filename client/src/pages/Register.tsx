@@ -10,6 +10,7 @@ export default function Register() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const navigate = useNavigate()
   const location = useLocation() as any
 
@@ -26,8 +27,19 @@ export default function Register() {
     }
     setLoading(true)
     try {
-      await register(email, password, username.trim())
-      // provider will navigate to /books on success
+      const res = await register(email, password, username.trim())
+      // if server returned a token we are already logged in (AuthContext stores it).
+      if (res?.token) {
+        const to = location.state?.from?.pathname || '/books'
+        navigate(to, { replace: true })
+        return
+      }
+
+      // otherwise show a success message and redirect to login
+      setSuccess('Account created successfully.')
+      setTimeout(() => {
+        navigate('/login', { replace: true })
+      }, 900)
     } catch (err: any) {
   setError(err?.response?.data?.message || 'Registration failed')
     } finally {
@@ -76,6 +88,7 @@ export default function Register() {
 
           <button className="full-btn" type="submit" disabled={loading} aria-disabled={loading}>{loading ? 'Creating account...' : 'Create account'}</button>
           {error && <p className="error">{error}</p>}
+          {success && <div className="toast" style={{ background: '#ecfdf5', color: '#065f46' }}>{success}</div>}
         </form>
 
         <div className="auth-footer">
