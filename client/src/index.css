@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+:root{
+  --bg-1: #f8fafc;
+  --bg-2: #eef2ff;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --primary-1: #2563eb;
+  --primary-2: #4f46e5;
+  --success: #059669;
+}
+
+*{box-sizing: border-box}
+html,body,#root{height:100%;}
+body{
+  margin:0;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background: linear-gradient(180deg,var(--bg-1) 0%, var(--bg-2) 60%);
+  color: #0f172a;
+  -webkit-font-smoothing:antialiased;
+}
+
+.app-wrapper{max-width:1100px;margin:0 auto;padding:24px}
+
+.auth-page{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:32px}
+.auth-card{width:min(540px,96%);background:var(--card);border-radius:12px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.06)}
+.auth-header{text-align:center;margin-bottom:8px}
+.logo{font-weight:700;color:#0f172a;margin-bottom:6px}
+.auth-title{margin:0;font-size:22px}
+.auth-sub{margin-top:6px;color:var(--muted);font-size:13px}
+.toast{margin:12px 0;padding:10px;background:#f1f5f9;border-radius:8px;color:#334155;font-size:13px}
+
+.form{display:grid;gap:10px;margin-top:14px}
+.form .label{font-size:13px;color:var(--muted);margin-bottom:6px}
+.input{padding:12px 14px;border-radius:10px;border:1px solid #e6eef8;font-size:14px;outline:none}
+.input:focus{box-shadow:0 6px 18px rgba(79,70,229,0.08);border-color:var(--primary-1)}
+.primary{margin-top:8px;padding:12px 14px;border-radius:10px;color:#fff;border:none;cursor:pointer;font-weight:700;background:linear-gradient(90deg,var(--primary-1),var(--primary-2))}
+.ghost{padding:8px 12px;border-radius:8px;background:transparent;border:1px solid #e6eef8;color:var(--primary-1);text-decoration:none}
+.error{text-align:center;color:#dc2626;margin-top:8px}
+.auth-footer{display:flex;justify-content:center;gap:12px;align-items:center;margin-top:16px;color:var(--muted)}
+
+/* Navbar */
+.navbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding:12px 16px;background:rgba(255,255,255,0.6);border-radius:10px}
+.nav-left{display:flex;gap:16px;align-items:center}
+.nav-left a{font-weight:600;color:#111827;text-decoration:none}
+.nav-right{display:flex;gap:12px;align-items:center}
+.nav-right a{color:var(--primary-1);text-decoration:none}
+.user-badge{opacity:0.9;font-weight:600}
+.logout-btn{padding:6px 10px;border-radius:8px;border:1px solid #e5e7eb;background:#fff;cursor:pointer}

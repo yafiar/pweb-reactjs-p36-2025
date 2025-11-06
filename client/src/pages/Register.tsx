@@ -36,22 +36,31 @@ export default function Register() {
   }
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Create an account</h2>
-        <p style={{ marginTop: 0, color: '#555' }}>Register a new account to get started.</p>
+    <div className="auth-page">
+      <div className="auth-card">
+        <header className="auth-header">
+          <div className="logo">IT Literature</div>
+          <h2 className="auth-title">Create an account</h2>
+          <p className="auth-sub">Register a new account to get started</p>
+        </header>
 
-        <form onSubmit={onSubmit} style={styles.form}>
-          <input style={styles.input} placeholder="Username" value={username} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setUsername(e.target.value)} />
-          <input style={styles.input} placeholder="Email" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setEmail(e.target.value)} type="email" />
-          <input style={styles.input} placeholder="Password" value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setPassword(e.target.value)} type="password" />
-          <button style={{ ...styles.button, background: '#059669' }} type="submit" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
-          {error && <p style={{ color: 'crimson', textAlign: 'center' }}>{error}</p>}
+        <form onSubmit={onSubmit} className="form">
+          <label className="label" htmlFor="username">Username</label>
+          <input id="username" className="input" placeholder="Choose a username" value={username} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setUsername(e.target.value)} />
+
+          <label className="label" htmlFor="email">Email</label>
+          <input id="email" className="input" placeholder="you@example.com" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setEmail(e.target.value)} type="email" />
+
+          <label className="label" htmlFor="password">Password</label>
+          <input id="password" className="input" placeholder="At least 6 characters" value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setPassword(e.target.value)} type="password" />
+
+          <button className="primary" type="submit" disabled={loading}>{loading ? 'Processing...' : 'Create account'}</button>
+          {error && <p className="error">{error}</p>}
         </form>
 
-        <div style={styles.footer}>
-          <span style={{ color: '#555' }}>Already have an account?</span>
-          <Link to="/login" style={styles.linkButton}>Login</Link>
+        <div className="auth-footer">
+          <span>Already have an account?</span>
+          <Link to="/login" className="ghost">Sign in</Link>
         </div>
       </div>
     </div>
