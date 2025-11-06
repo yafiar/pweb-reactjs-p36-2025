@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom'
 type AuthContextType = {
   user: AuthUser | null
   isAuthenticated: boolean
-  login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string, username?: string) => Promise<void>
+  login: (email: string, password: string) => Promise<any>
+  register: (email: string, password: string, username?: string) => Promise<any>
   logout: () => void
 }
 
@@ -22,9 +22,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const res = await api.post('/auth/login', { email, password })
     const { token, user } = res.data
     setToken(token)
-    setUser(user)
-    setUserState(user)
-    navigate('/books', { replace: true })
+    if (user) {
+      setUser(user)
+      setUserState(user)
+    }
+    return res.data
   }
 
   const register = async (email: string, password: string, username?: string) => {
@@ -39,8 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUserState(user)
       }
     }
-    // still navigate to /books for now
-    navigate('/books', { replace: true })
+    return res.data
   }
 
   const logout = () => {

@@ -39,22 +39,42 @@ export default function Register() {
     <div className="auth-page">
       <div className="auth-card">
         <header className="auth-header">
-          <div className="logo">IT Literature</div>
           <h2 className="auth-title">Create an account</h2>
           <p className="auth-sub">Register a new account to get started</p>
         </header>
 
         <form onSubmit={onSubmit} className="form">
           <label className="label" htmlFor="username">Username</label>
-          <input id="username" className="input" placeholder="Choose a username" value={username} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setUsername(e.target.value)} />
+          <div className="input-group">
+            <span className="input-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-5 0-9 2.5-9 5v1h18v-1c0-2.5-4-5-9-5z" />
+              </svg>
+            </span>
+            <input id="username" className="input with-icon" placeholder="Choose a username" value={username} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setUsername(e.target.value)} />
+          </div>
 
           <label className="label" htmlFor="email">Email</label>
-          <input id="email" className="input" placeholder="you@example.com" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setEmail(e.target.value)} type="email" />
+          <div className="input-group">
+            <span className="input-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M2 6.5A2.5 2.5 0 014.5 4h15A2.5 2.5 0 0122 6.5v11A2.5 2.5 0 0119.5 20h-15A2.5 2.5 0 012 17.5v-11zM4.5 6A.5.5 0 004 6.5v.637l7 4.375 7-4.375V6.5a.5.5 0 00-.5-.5h-13z" />
+              </svg>
+            </span>
+            <input id="email" className="input with-icon" placeholder="you@example.com" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setEmail(e.target.value)} type="email" />
+          </div>
 
           <label className="label" htmlFor="password">Password</label>
-          <input id="password" className="input" placeholder="At least 6 characters" value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setPassword(e.target.value)} type="password" />
+          <div className="input-group">
+            <span className="input-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M17 8h-1V7a4 4 0 10-8 0v1H7a2 2 0 00-2 2v7a2 2 0 002 2h10a2 2 0 002-2v-7a2 2 0 00-2-2zM9 7a2 2 0 114 0v1H9V7z" />
+              </svg>
+            </span>
+            <input id="password" className="input with-icon" placeholder="At least 6 characters" value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setPassword(e.target.value)} type="password" />
+          </div>
 
-          <button className="primary" type="submit" disabled={loading}>{loading ? 'Processing...' : 'Create account'}</button>
+          <button className="full-btn" type="submit" disabled={loading} aria-disabled={loading}>{loading ? 'Creating account...' : 'Create account'}</button>
           {error && <p className="error">{error}</p>}
         </form>
 

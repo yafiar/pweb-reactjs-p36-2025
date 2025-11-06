@@ -1,33 +1,54 @@
 
-import React, { FormEvent, useState } from 'react'
+import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { useLocation, Link } from 'react-router-dom'
+import { useLocation, Link, useNavigate } from 'react-router-dom'
+
+type FormState = { email: string; password: string; remember: boolean }
+type Errors = { email?: string; password?: string; global?: string }
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export default function Login() {
   const { login } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
   const location = useLocation() as any
   const from = location.state?.from?.pathname || '/books'
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    if (!email || !password) {
-      setError('Email and password are required')
-      return
-    }
+  const [form, setForm] = useState<FormState>({ email: '', password: '', remember: true })
+  const [errors, setErrors] = useState<Errors>({})
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
+
+  const validate = () => {
+    const e: Errors = {}
+    if (!emailRegex.test(form.email)) e.email = 'Enter a valid email'
+    // Server expects minimum 6 characters for password; validate client-side as well
+    if (form.password.length < 6) e.password = 'Minimum 6 characters'
+    setErrors(e)
+    return Object.keys(e).length === 0
+  }
+
+  const onSubmit = async (ev: React.FormEvent) => {
+    ev.preventDefault()
+    setErrors({})
+    if (!validate()) return
     setLoading(true)
     try {
-      await login(email, password)
+      const res = await login(form.email, form.password)
+      setSuccess('Logged in! Welcome back')
+      // small delay so user sees the success toast
+      setTimeout(() => {
+        navigate(from, { replace: true })
+      }, 400)
     } catch (err: any) {
-  setError(err?.response?.data?.message || 'Login failed')
+      const msg = err?.response?.data?.message || err?.message || 'Login failed'
+      setErrors({ global: msg })
     } finally {
       setLoading(false)
+      setTimeout(() => setSuccess(null), 2000)
     }
   }
+
   return (
     <div className="auth-page">
       <div className="auth-card">
@@ -37,16 +58,61 @@ export default function Login() {
         </header>
 
         {location.state?.from && <div className="toast">Please login to access: <strong>{from}</strong></div>}
+        {success && <div className="toast" style={{ background: '#ecfdf5', color: '#065f46' }}>{success}</div>}
 
         <form onSubmit={onSubmit} className="form">
-          <label className="label" htmlFor="email">Email</label>
-          <input id="email" className="input" placeholder="you@example.com" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setEmail(e.target.value)} type="email" autoComplete="email" />
+          <div className="input-group">
+            <span className="input-icon" aria-hidden>
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 6.5A2.5 2.5 0 014.5 4h15A2.5 2.5 0 0122 6.5v11A2.5 2.5 0 0119.5 20h-15A2.5 2.5 0 012 17.5v-11zM4.5 6A.5.5 0 004 6.5v.637l7 4.375 7-4.375V6.5a.5.5 0 00-.5-.5h-13z" />
+              </svg>
+            </span>
+            <input
+              id="email"
+              className="input with-icon"
+              placeholder="you@company.com"
+              value={form.email}
+              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              type="email"
+              autoComplete="email"
+            />
+          </div>
+          {errors.email && <p className="text-xs text-red-600">{errors.email}</p>}
 
-          <label className="label" htmlFor="password">Password</label>
-          <input id="password" className="input" placeholder="Enter your password" value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setPassword(e.target.value)} type="password" autoComplete="current-password" />
+          <div className="input-group">
+            <span className="input-icon" aria-hidden>
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17 8h-1V7a4 4 0 10-8 0v1H7a2 2 0 00-2 2v7a2 2 0 002 2h10a2 2 0 002-2v-7a2 2 0 00-2-2zM9 7a2 2 0 114 0v1H9V7z" />
+              </svg>
+            </span>
+            <input
+              id="password"
+              className="input with-icon"
+              placeholder="********"
+              value={form.password}
+              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+              type="password"
+              autoComplete="current-password"
+            />
+          </div>
+          {errors.password && <p className="text-xs text-red-600">{errors.password}</p>}
 
-          <button className="primary" type="submit" disabled={loading}>{loading ? 'Processing...' : 'Sign in'}</button>
-          {error && <p className="error">{error}</p>}
+          <div className="row-between">
+            <label className="remember">
+              <input
+                type="checkbox"
+                className="checkbox"
+                checked={form.remember}
+                onChange={(e) => setForm((f) => ({ ...f, remember: e.target.checked }))}
+              />{' '}
+              Remember me
+            </label>
+            <Link to="#" className="small-link">Forgot password?</Link>
+          </div>
+
+          <button className="full-btn" type="submit" disabled={loading}>{loading ? 'Logging in...' : 'Login'} &nbsp;→</button>
+
+          {errors.global && <p className="error">{errors.global}</p>}
         </form>
 
         <div className="auth-footer">
@@ -56,21 +122,4 @@ export default function Login() {
       </div>
     </div>
   )
-}
-
-const styles: Record<string, any> = {
-  pageModern: { minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'linear-gradient(180deg,#f8fafc 0%, #eef2ff 60%)' },
-  cardModern: { width: 'min(520px, 96%)', padding: 28, borderRadius: 14, boxShadow: '0 10px 30px rgba(2,6,23,0.08)', background: '#ffffff' },
-  header: { marginBottom: 6, textAlign: 'center' },
-  logo: { fontWeight: 700, color: '#111827', marginBottom: 6 },
-  title: { margin: 0, fontSize: 22, color: '#0f172a' },
-  subtitle: { marginTop: 6, color: '#475569', fontSize: 13 },
-  toast: { margin: '12px 0', padding: 10, background: '#f1f5f9', borderRadius: 8, color: '#334155', fontSize: 13 },
-  form: { display: 'grid', gap: 10, marginTop: 14 },
-  label: { fontSize: 13, color: '#475569', marginBottom: 6 },
-  inputModern: { padding: '12px 14px', borderRadius: 10, border: '1px solid #e6eef8', outline: 'none', fontSize: 14, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)' },
-  primaryButton: { marginTop: 6, padding: '12px 14px', borderRadius: 10, color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, background: 'linear-gradient(90deg,#2563eb,#4f46e5)' },
-  error: { color: '#dc2626', marginTop: 8, textAlign: 'center' },
-  footerModern: { display: 'flex', justifyContent: 'center', gap: 12, alignItems: 'center', marginTop: 16 },
-  ghostButton: { padding: '8px 12px', borderRadius: 8, background: 'transparent', border: '1px solid #e6eef8', color: '#2563eb', textDecoration: 'none' }
 }
